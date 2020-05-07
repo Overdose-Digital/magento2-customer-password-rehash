@@ -1,0 +1,25 @@
+{
+    "name": "overdose/magento2-customer-password-rehash",
+    "description": "Overdose Customer Password Hash Upgrade",
+    "type": "magento2-module",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Overdose",
+            "email": "hello@overdose.digital"
+        }
+    ],
+    "require": {
+        "php": "^7.0",
+        "magento/framework": "102.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Overdose\\CustomerPasswordReHash\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    },
+    "version": "1.0.0"
+}
