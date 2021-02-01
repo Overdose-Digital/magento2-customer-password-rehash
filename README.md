@@ -5,6 +5,7 @@ Tags: Bcrypt, $2y$10$
 
 Fixes customer login issue from Magento 1 migration to Magento 2.
 It checks if encryption of logged in user is Bcrypt and rehashes it to new algorithm.
+Supports Magento Community and Enterprise.
 
 ## Installation
 
@@ -15,7 +16,7 @@ composer config repositories.od-password-rehash-github vcs https://github.com/Ov
 
 Install package:
 ```
-composer require overdose/module-cmscontent
+composer require overdose/magento2-customer-password-rehash
 ```
 
 ## TODO

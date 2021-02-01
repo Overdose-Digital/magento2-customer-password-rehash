@@ -6,12 +6,12 @@
 
 namespace Overdose\CustomerPasswordReHash\Plugin\Customer\Model;
 
+use Magento\Customer\Model\Authentication;
 use Magento\Customer\Model\CustomerRegistry;
 use Magento\Customer\Model\ResourceModel\Customer as CustomerResourceModel;
 use Magento\Framework\Encryption\EncryptorInterface as Encryptor;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Overdose\CustomerPasswordReHash\Model\PasswordVerifier;
-use Magento\Customer\Model\Authentication;
 
 /**
  * Plugin for Authentication
@@ -67,13 +67,14 @@ class AuthenticationPlugin
      */
     public function beforeAuthenticate(
         Authentication $subject,
-        $customerId,
-        $password
-    ) {
+        int $customerId,
+        string $password
+    ): void {
         $customerSecure = $this->customerRegistry->retrieveSecureData($customerId);
         $hash = $customerSecure->getPasswordHash();
-        if ($this->passwordVerifier->isBcrypt($hash)
-            && $this->passwordVerifier->verify($password, $hash)
+        // M1 Community || M1 Enterprise
+        if (($this->passwordVerifier->isBcrypt($hash) && $this->passwordVerifier->verifyBcrypt($password, $hash))
+            || ($this->passwordVerifier->isSha256($hash) && $this->passwordVerifier->verifySha256($hash, $password))
         ) {
             $this->customerRegistry->remove($customerId);
             $hash = $this->encryptor->getHash($password, true);
