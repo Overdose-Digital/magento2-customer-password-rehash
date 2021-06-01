@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="od_core" translate="label" sortOrder="10">
+            <label>Overdose</label>
+        </tab>
+        <section id="rehash_passwd" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Password Rehash</label>
+            <tab>od_core</tab>
+            <resource>Overdose_Core::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General Options</label>
+                <field id="od_amount_months" translate="label" type="text" showInWebsite="1" showInDefault="1" showInStore="1" sortOrder="30" canRestore="1">
+                    <label>Amount Months for Cron Job</label>
+                    <comment>Please put amount of months which will be used for checking users, who did not visit store during entered time period (Default value: 12 months)</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
