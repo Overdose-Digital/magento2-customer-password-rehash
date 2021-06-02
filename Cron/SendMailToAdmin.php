@@ -97,7 +97,8 @@ class SendMailToAdmin
         foreach ($customerCollection as $customer) {
             if ($customer->getPasswordHash()) {
                 $validatedHash = $this->validateHash($customer->getPasswordHash());
-                if (!$validatedHash) {//if not rehashed check last visit
+
+                if (!$validatedHash) {//if not rehashed, check last visit
                     $checked = $this->checkLastVizited($months, $customer->getId());
 
                     if ($checked) {
@@ -131,6 +132,7 @@ class SendMailToAdmin
         $currentTime = $this->_localeDate->date();
         $modifiedTime = $currentTime->modify("-$months month")
             ->format(\Magento\Framework\Stdlib\DateTime::DATETIME_PHP_FORMAT);
+
         $visitorCollection = $this->visitorCollectionFactory->create();
         $visitorCollection->addFieldToSelect('*')->addFieldToFilter('customer_id', ['eq' => $customerId]);
         $lastVisitTime = $visitorCollection->getFirstItem()->getLastVisitAt();
