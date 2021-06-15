@@ -9,3 +9,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cron which checks all passwords in Db for rehash. When all of them are rehashed, will send mail to admin for disabling module.
 - Added config for amount of months which admin can set for missing old customers (ancient visitors)
 
+### Changed
+- Refactored code (removed call to db in loop), made optimisation with filtering collection, changed logic with sending mail

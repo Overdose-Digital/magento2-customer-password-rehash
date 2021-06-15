@@ -51,6 +51,11 @@ class SendMailToAdmin
     protected $inlineTranslation;
 
     /**
+     * @var \Magento\Customer\Model\ResourceModel\Visitor\Collection
+     */
+    protected $visitorCollection;
+
+    /**
      * SendMailToAdmin constructor.
      *
      * @param ScopeConfigInterface $scopeConfig
@@ -76,6 +81,7 @@ class SendMailToAdmin
         $this->_localeDate = $_localeDate;
         $this->transportBuilder = $transportBuilder;
         $this->inlineTranslation = $inlineTranslation;
+        $this->visitorCollection = $this->visitorCollectionFactory->create();
     }
 
     /**
@@ -91,7 +97,8 @@ class SendMailToAdmin
         );
 
         $collection = $this->customerCollection->create();
-        $customerCollection = $collection->addAttributeToSelect('*')->getItems();
+        $customerCollection = $collection->addAttributeToSelect(['entity_id', 'password_hash'])->getItems();
+        $checked = [];
 
         /** @var Customer $customer */
         foreach ($customerCollection as $customer) {
@@ -99,13 +106,14 @@ class SendMailToAdmin
                 $validatedHash = $this->validateHash($customer->getPasswordHash());
 
                 if (!$validatedHash) {//if not rehashed, check last visit
-                    $checked = $this->checkLastVizited($months, $customer->getId());
-
-                    if ($checked) {
-                        $this->sentMail();
-                    }
+                    $checked[] = $this->checkLastVisit($months, $customer->getId());
                 }
             }
+        }
+        if (in_array(false, $checked)) {// false means that last visit was less than was established from config
+            return $this;
+        } else {
+            $this->sentMail();
         }
         return $this;
     }
@@ -127,15 +135,15 @@ class SendMailToAdmin
      * @param $customerId
      * @return bool
      */
-    public function checkLastVizited($months, $customerId)
+    public function checkLastVisit($months, $customerId)
     {
         $currentTime = $this->_localeDate->date();
         $modifiedTime = $currentTime->modify("-$months month")
             ->format(\Magento\Framework\Stdlib\DateTime::DATETIME_PHP_FORMAT);
 
-        $visitorCollection = $this->visitorCollectionFactory->create();
-        $visitorCollection->addFieldToSelect('*')->addFieldToFilter('customer_id', ['eq' => $customerId]);
-        $lastVisitTime = $visitorCollection->getFirstItem()->getLastVisitAt();
+        $this->visitorCollection->addFieldToSelect(['customer_id', 'last_visit_at'])
+            ->addFieldToFilter('customer_id', ['eq' => $customerId]);
+        $lastVisitTime = $this->visitorCollection->getFirstItem()->getLastVisitAt();
 
         if (isset($lastVisitTime)) {
             return $modifiedTime > $lastVisitTime ? true : false;
