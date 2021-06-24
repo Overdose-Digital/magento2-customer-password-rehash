@@ -98,23 +98,23 @@ class SendMailToAdmin
 
         $collection = $this->customerCollection->create();
         $customerCollection = $collection->addAttributeToSelect(['entity_id', 'password_hash'])->getItems();
-        $checked = [];
+        $allDone = false;
 
         /** @var Customer $customer */
         foreach ($customerCollection as $customer) {
-            if ($customer->getPasswordHash()) {
-                $validatedHash = $this->validateHash($customer->getPasswordHash());
-
-                if (!$validatedHash) {//if not rehashed, check last visit
-                    $checked[] = $this->checkLastVisit($months, $customer->getId());
+            if ($hash = $customer->getPasswordHash()) {
+                if (!$this->validateHash($hash)) {//if not rehashed, check last visit
+                    if ($this->checkIsActive($months, $customer->getId())) {
+                        $allDone = true;
+                        break;
+                    }
                 }
             }
         }
-        if (in_array(false, $checked)) {// false means that last visit was less than was established from config
-            return $this;
-        } else {
+        if ($allDone == false) {
             $this->sentMail();
         }
+
         return $this;
     }
 
@@ -131,11 +131,13 @@ class SendMailToAdmin
     }
 
     /**
+     * Checks if user is active during period $months
+     *
      * @param $months
      * @param $customerId
      * @return bool
      */
-    public function checkLastVisit($months, $customerId)
+    public function checkIsActive($months, $customerId)
     {
         $currentTime = $this->_localeDate->date();
         $modifiedTime = $currentTime->modify("-$months month")
@@ -145,9 +147,11 @@ class SendMailToAdmin
             ->addFieldToFilter('customer_id', ['eq' => $customerId]);
         $lastVisitTime = $this->visitorCollection->getFirstItem()->getLastVisitAt();
 
+        $result = false;
         if (isset($lastVisitTime)) {
-            return $modifiedTime > $lastVisitTime ? true : false;
+            $result = $modifiedTime > $lastVisitTime ? true : false;
         }
+        return $result;
     }
 
     /**
@@ -176,9 +180,7 @@ class SendMailToAdmin
                     'store' => \Magento\Store\Model\Store::DEFAULT_STORE_ID,
                 ]
             )
-            ->setTemplateVars([
-                'data'=> 'All passwords were rehashed! You can to disable module "Overdose_CustomerPasswordReHash".'
-            ])
+            ->setTemplateVars([])
             ->setFromByScope($sender)
             ->addTo($sentToEmail, $sentToName)
             //->addTo('owner@example.com','owner')
