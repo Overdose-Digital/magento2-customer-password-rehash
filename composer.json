@@ -10,7 +10,6 @@
         }
     ],
     "require": {
-        "php": "^7.0",
         "magento/framework": "102.0.*"
     },
     "autoload": {
