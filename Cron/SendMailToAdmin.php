@@ -2,7 +2,6 @@
 
 namespace Overdose\CustomerPasswordReHash\Cron;
 
-use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory;
 use Magento\Customer\Model\ResourceModel\Visitor\CollectionFactory as VisitorCollectionFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -85,6 +84,8 @@ class SendMailToAdmin
     }
 
     /**
+     * Check "are all passwords rehrshed?". If "Yes" - send mail.
+     *
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      * @throws \Magento\Framework\Exception\LocalizedException
      */
@@ -98,20 +99,22 @@ class SendMailToAdmin
 
         $collection = $this->customerCollection->create();
         $customerCollection = $collection->addAttributeToSelect(['entity_id', 'password_hash'])->getItems();
-        $allDone = false;
+        $notReheshedLeft = false;
 
-        /** @var Customer $customer */
         foreach ($customerCollection as $customer) {
+            /** @var \Magento\Customer\Model\Customer $customer */
             if ($hash = $customer->getPasswordHash()) {
                 if (!$this->validateHash($hash)) {//if not rehashed, check last visit
                     if ($this->checkIsActive($months, $customer->getId())) {
-                        $allDone = true;
+                        $notReheshedLeft = true;
                         break;
                     }
                 }
             }
         }
-        if ($allDone == false) {
+
+        // Send mail if no left "not reheshed" customers (or they are old)
+        if (!$notReheshedLeft) {
             $this->sentMail();
         }
 
@@ -183,7 +186,6 @@ class SendMailToAdmin
             ->setTemplateVars([])
             ->setFromByScope($sender)
             ->addTo($sentToEmail, $sentToName)
-            //->addTo('owner@example.com','owner')
             ->getTransport();
 
         $transport->sendMessage();
