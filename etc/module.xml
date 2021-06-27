@@ -2,12 +2,10 @@
 <!--
 /**
  * Copyright © Overdose Digital. All rights reserved.
- * See LICENSE_OVERDOSE.txt for license details.
  */
 -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Overdose_CustomerPasswordReHash" setup_version="1.0.0">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="Overdose_CustomerPasswordReHash">
         <sequence>
             <module name="Magento_Customer"/>
         </sequence>

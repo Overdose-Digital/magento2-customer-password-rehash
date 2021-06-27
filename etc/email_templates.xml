@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="od_send_message_admin_template" label="Result of checking last visited customer with not rehashed passwd" file="od-send-message-admin-template.html" type="html" module="Overdose_CustomerPasswordReHash" area="adminhtml"/>
+</config>
