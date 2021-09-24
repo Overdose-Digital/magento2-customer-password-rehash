@@ -11,3 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Refactored code (removed call to db in loop), made optimisation with filtering collection, changed logic with sending mail
+
+## [1.1.1] - 24-09-2021
+### Added
+- Check empty hash in customer authentication process.
