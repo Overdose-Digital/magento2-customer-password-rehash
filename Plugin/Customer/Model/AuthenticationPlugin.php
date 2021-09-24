@@ -9,7 +9,9 @@ use Magento\Customer\Model\Authentication;
 use Magento\Customer\Model\CustomerRegistry;
 use Magento\Customer\Model\ResourceModel\Customer as CustomerResourceModel;
 use Magento\Framework\Encryption\EncryptorInterface as Encryptor;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Phrase;
 use Overdose\CustomerPasswordReHash\Model\PasswordVerifier;
 
 /**
@@ -62,7 +64,7 @@ class AuthenticationPlugin
      * @param int $customerId
      * @param string $password
      * @return void
-     * @throws NoSuchEntityException
+     * @throws NoSuchEntityException | LocalizedException
      */
     public function beforeAuthenticate(
         Authentication $subject,
@@ -71,6 +73,9 @@ class AuthenticationPlugin
     ): void {
         $customerSecure = $this->customerRegistry->retrieveSecureData($customerId);
         $hash = $customerSecure->getPasswordHash();
+        if (empty($hash)) {
+            throw new LocalizedException(new Phrase('You don\'t have password. Please, press reset password'));
+        }
         // M1 Community || M1 Enterprise
         if (($this->passwordVerifier->isBcrypt($hash) && $this->passwordVerifier->verifyBcrypt($password, $hash))
             || ($this->passwordVerifier->isSha256($hash) && $this->passwordVerifier->verifySha256($hash, $password))
