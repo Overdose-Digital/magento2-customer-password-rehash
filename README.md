@@ -14,4 +14,4 @@ This module rehashes old hashed passwords and checks passwords in db for rehashi
 - Supports Magento Community and Enterprise. 
 
 ## Configurations
-- `rehash_passwd/general/od_amount_months`. Amount months which need to be subtracted from now for missing check users, who visited store a long time ago. Default value - 12 months. See `const KEY_OD_AMOUNT_MONTHS`.
+- `rehash_passwd/general/od_amount_months`. Amount months that need to be subtracted from now for missing check users who visited the store a long time ago. Default value - 12 months. See `const KEY_OD_AMOUNT_MONTHS`.
