@@ -10,7 +10,8 @@
         }
     ],
     "require": {
-        "magento/module-customer": "*"
+        "magento/module-customer": "*",
+        "overdose/module-core": "*"
     },
     "autoload": {
         "psr-4": {
@@ -20,5 +21,5 @@
             "registration.php"
         ]
     },
-    "version": "1.1.2"
+    "version": "1.1.3"
 }
