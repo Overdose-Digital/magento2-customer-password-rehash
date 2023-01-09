@@ -8,6 +8,7 @@
     <module name="Overdose_CustomerPasswordReHash">
         <sequence>
             <module name="Magento_Customer"/>
+            <module name="Overdose_Core" />
         </sequence>
     </module>
 </config>
